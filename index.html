@@ -929,7 +929,7 @@
                 time: ["20:04", "2004", "20 04"],
                 },
                 paragraphs: [
-                    { text: "그래서 너 울산이었어 헐 대박 이러고 있다가 이제 한글꼴 와가지고 그냥 효담 언니랑 너는 듣기에 ‘ 저 사람들 경상도 쪽에서 왔구먼? ’이라고 생각하기는 했어.", indent: 3.5 } 
+                    { text: "그래서 너 울산이었어 헐 대박 이러고 있다가 이제 한글꼴 와가지고 그냥 효담 언니랑 너는 듣기에 ‘저 사람들 경상도 쪽에서 왔구먼? ’이라고 생각하기는 했어.", indent: 3.5 } 
                 ],
                 bgColor: '#6C288B', textColor: '#6C288B', boxColor: '#FFE97B'
             },
@@ -1001,6 +1001,7 @@
         let accumulatedDeltaY = 0;
         let isTransitioning = false;
         let isCooldown = false;
+        let isSpecialScreen = false;
 
         const SENSITIVITY_THRESHOLD = 600;
         const IDLE_SHUFFLE_TIMEOUT = 6000; // 이 시간(ms) 동안 스크롤이 없으면 본문이 셔플됨
@@ -1064,6 +1065,8 @@
         const list = detailData[key];
         if (!list || list.length === 0) return;
 
+        isSpecialScreen = true;
+
         let randomIndex;
         do {
             randomIndex = Math.floor(Math.random() * list.length);
@@ -1089,6 +1092,7 @@
         // '이 곳' 클릭
         function showRandomMain() {
             if (isTransitioning) return;
+            isSpecialScreen = false;
 
             let randomIndex;
             do {
@@ -1108,6 +1112,7 @@
         // 4방향 슬라이드 실행 함수
         function slideToDirection(dir) {
             isTransitioning = true;
+            isSpecialScreen = false;
 
             let nextIndex;
             do {
@@ -1143,16 +1148,16 @@
         }
         // 셔플 타이머
         function startIdleShuffleTimer() {
-            clearTimeout(idleShuffleTimer);
-            idleShuffleTimer = setTimeout(() => {
-                if (!isTransitioning && !isCooldown) {
-                    const dirs = ['up', 'down', 'left', 'right'];
-                    const randomDir = dirs[Math.floor(Math.random() * dirs.length)];
-                    slideToDirection(randomDir);
-                }
-                startIdleShuffleTimer();
-            }, IDLE_SHUFFLE_TIMEOUT);
-        }
+        clearTimeout(idleShuffleTimer);
+        idleShuffleTimer = setTimeout(() => {
+            if (!isTransitioning && !isCooldown && !isSpecialScreen) {   
+                const dirs = ['up', 'down', 'left', 'right'];
+                const randomDir = dirs[Math.floor(Math.random() * dirs.length)];
+                slideToDirection(randomDir);
+            }
+            startIdleShuffleTimer();
+        }, IDLE_SHUFFLE_TIMEOUT);
+    }
 
         startIdleShuffleTimer();
 
@@ -1223,6 +1228,7 @@ function submitSearch() {
     });
 
     if (matchIndex !== -1) {
+        isSpecialScreen = false;
         currentIndex = matchIndex;
         renderPage(activeLayer, activeBox, pagesData[matchIndex]);
     }
@@ -1261,6 +1267,7 @@ function submitSearch() {
         // 검색 UI 
 function showSearchInput() {
     if (isTransitioning) return;
+    isSpecialScreen = true
 
     let colorIndex;
     do {
