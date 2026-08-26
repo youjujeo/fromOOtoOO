@@ -1,0 +1,257 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body, html {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background-color: #111;
+}
+
+/* 폰트 세팅 */
+@font-face {
+    font-family: 'D';
+    src: url('./fonts/10.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'n';
+    src: url('./fonts/20.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+}
+
+/* 4방향 슬라이더 스테이지 */
+.stage {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    will-change: transform;
+    pointer-events: none;
+}
+
+.slide.current {
+    pointer-events: auto;
+}
+
+/* 텍스트 컨테이너 */
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    width: 55vw;              
+    gap: 2vh;
+}
+
+/* 문단 블록 */
+.text-block {
+    display: block;
+    width: 100%;
+    
+    font-size: 2.55vw;          
+    font-weight: 500;
+    line-height: 1.7;       
+    word-break: keep-all;
+    background-color: transparent;
+    white-space: pre-wrap;
+}
+
+.indent-box {
+    display: inline-block;
+    height: 1px;
+    vertical-align: middle;
+    background: transparent;
+}
+
+/* 흰색 박스 */
+.text-content {
+    display: inline;
+    
+    padding: 0.6em 0.6em;    
+    
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    border-radius: 0;
+}
+
+/* 우측 상단 문구 */
+.top-right-notice {
+    position: fixed;
+    top: 2rem;
+    left: 2.3rem;
+    z-index: 1000; 
+    
+    font-family: 'D', sans-serif;
+    font-size: 1.5vw;           
+    font-weight: 500;
+    line-height: 1.2em;
+}
+
+/* 클릭 가능한 단어 */
+.click-word {
+    cursor: pointer;
+    font-weight: normal;
+    
+    text-decoration: underline;
+    text-underline-offset: 0.28em;       
+    text-decoration-thickness: 0.085em;
+    
+    display: inline-block;
+}
+
+/* 검색 박스 컨테이너 */
+.search-box-wrapper {
+    display: block;
+    width: 100%;
+    max-width: 55vw;
+    text-align: left;
+    margin: 0 auto;
+    z-index: 20;
+}
+
+/* 투명 스페이서 */
+.search-spacer {
+    display: inline-block;
+    width: 8.5vw;
+    height: 1px;
+    vertical-align: baseline;
+}
+
+.search-content {
+    display: inline;
+    background-color: var(--search-box-color, #066B81);
+    color: var(--search-text-color, #E2F0EA);
+    
+    font-family: 'D', sans-serif;
+    font-size: 2.55vw;
+    font-weight: 500;
+    line-height: 1.7;
+    
+    padding: 0.7em 0.8em;
+    
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+    
+    white-space: normal;
+    word-break: break-all;
+    overflow-wrap: break-word;
+}
+
+.search-field {
+    display: inline;
+    align-items: center;
+    min-width: 2px;
+    min-height: 1em;    
+    max-width: 100%;
+
+    outline: none;
+    border: none;
+    background: transparent;
+    color: var(--search-text-color, #E2F0EA);
+    font-weight: 400;
+    white-space: pre-wrap;
+    word-break: break-all;
+    overflow-wrap: anywhere;
+    vertical-align: middle;
+    cursor: text;
+    caret-color: var(--search-text-color, #E2F0EA);
+}
+
+.search-field:empty {
+    display: inline-block;  
+    min-width: 2px;
+    min-height: 1em;
+    vertical-align: middle;
+}
+
+.search-field:empty::before {
+    content: attr(data-placeholder);
+    color: var(--search-placeholder-color, #9EC0C7);
+    opacity: 0.6;
+    pointer-events: none;
+    display: inline;
+}
+
+/* 고정 쉼표(,) 구분자 */
+.search-divider {
+    font-family: 'D', sans-serif;
+    font-size: 2.55vw;
+    color: var(--search-text-color, #E2F0EA);
+    font-weight: 400;
+    user-select: none;
+    display: inline;
+    margin: 0 0.25em 0 0.1em;
+}
+
+
+/* 합성글꼴 */
+
+.composite-text .ko,
+.composite-text .punct,
+.composite-text .latin-num-sym {
+    display: inline;
+    vertical-align: baseline;
+}
+
+/* 1 한글 및 띄어쓰기 */
+.composite-text .ko {
+    font-family: 'D', sans-serif;
+    transform: scaleX(0.96);
+    transform-origin: left center;
+    word-spacing: -0.175em;
+}
+
+/* 2 구두점 */
+.composite-text .punct {
+    font-family: 'n', monospace;
+    font-size: 1.05em;
+    transform: scaleX(0.96) translateY(0em);
+    transform-origin: center center;
+
+    margin-left: -0.12em;
+    margin-right: -0.12em;
+    letter-spacing: -0.175em;
+
+    vertical-align: -0.06em
+}
+
+/* 3 나머지 */
+.composite-text .latin-num-sym {
+    font-family: 'n', monospace;
+    font-size: 1.05em;
+    transform: scaleX(0.94) translateY(0em);
+    transform-origin: center center;
+
+    vertical-align: -0.06em
+}
+
+/* --- 4방향 이동 슬라이드 클래스 --- */
+.slide.current { transform: translate(0, 0); }
+
+.slide.from-down  { transform: translate(0, 100%); }
+.slide.from-up    { transform: translate(0, -100%); }
+.slide.from-right { transform: translate(100%, 0); }
+.slide.from-left  { transform: translate(-100%, 0); }
+
+.slide.to-up    { transform: translate(0, -100%); }
+.slide.to-down  { transform: translate(0, 100%); }
+.slide.to-left  { transform: translate(-100%, 0); }
+.slide.to-right { transform: translate(100%, 0); }
