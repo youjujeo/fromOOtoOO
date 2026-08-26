@@ -1009,7 +1009,7 @@
 
         // 인디자인 합성 글꼴 파싱 함수
         function getCompositeHTML(text) {
-            const regex = /([.,!?'"⋯:;]+)|([a-zA-Z0-9#$%&()*+<\=>@\[\\\]^_`{|}~-]+)|([가-힣ㄱ-ㅎㅏ-ㅣ]+)/g;
+            const regex = /([.,!?'"“”‘’⋯:;]+)|([a-zA-Z0-9#$%&()*+<\=>@\[\\\]^_`{|}~-]+)|([가-힣ㄱ-ㅎㅏ-ㅣ]+)/g;
             
             return text.replace(regex, (match, punct, latin, ko) => {
                 if (punct) return `<span class="punct">${punct}</span>`;
@@ -1064,8 +1064,6 @@
         if (isTransitioning) return;
         const list = detailData[key];
         if (!list || list.length === 0) return;
-
-        isSpecialScreen = true;
 
         let randomIndex;
         do {
