@@ -1019,7 +1019,12 @@
             });
         }
 
-        function reformatCompositeInput(el) {
+        function reformatCompositeInput(el, event) {
+            // 한글 등 IME 조합 중에는 DOM을 재구성하지 않음.
+            // 조합 중에 innerHTML을 다시 그리면 크롬은 조합 상태(자모 결합)를 잃어버리고,
+            // 사파리는 조합 종료 시 글자가 중복 입력되는 문제가 생김.
+            if ((event && event.isComposing) || el.dataset.composing === '1') return;
+
             const text = el.innerText;
             el.innerHTML = getCompositeHTML(text);
 
@@ -1307,11 +1312,11 @@ function showSearchInput() {
    searchWrapper.innerHTML = `
         <span class="search-spacer"></span><!-- 공간 확보 -->
         <span class="search-content">
-            <span class="search-field" id="input1" contenteditable="true" data-placeholder="책 제목" oninput="reformatCompositeInput(this)" onkeydown="handleInputKey(event, 'input2')"></span><!--
+            <span class="search-field" id="input1" contenteditable="true" data-placeholder="책 제목" oninput="reformatCompositeInput(this, event)" onkeydown="handleInputKey(event, 'input2')"></span><!--
          --><span class="search-divider">${getCompositeHTML(',')}</span><!--
-         --><span class="search-field" id="input2" contenteditable="true" data-placeholder=" 첫 단어" oninput="reformatCompositeInput(this)" onkeydown="handleInputKey(event, 'input3')"></span><!--
+         --><span class="search-field" id="input2" contenteditable="true" data-placeholder=" 첫 단어" oninput="reformatCompositeInput(this, event)" onkeydown="handleInputKey(event, 'input3')"></span><!--
          --><span class="search-divider">${getCompositeHTML(',')}</span><!--
-         --><span class="search-field" id="input3" contenteditable="true" data-placeholder=" 타임스탬프  " oninput="reformatCompositeInput(this)" onkeydown="handleInputKey(event, 'submit')"></span>
+         --><span class="search-field" id="input3" contenteditable="true" data-placeholder=" 타임스탬프  " oninput="reformatCompositeInput(this, event)" onkeydown="handleInputKey(event, 'submit')"></span>
         </span>
     `;
 
@@ -1321,6 +1326,16 @@ function showSearchInput() {
     fields.forEach(field => {
         field.addEventListener('click', (e) => e.stopPropagation());
         field.addEventListener('mousedown', (e) => e.stopPropagation());
+
+        // IME(한글 등) 조합 시작/끝 추적
+        field.addEventListener('compositionstart', () => {
+            field.dataset.composing = '1';
+        });
+        field.addEventListener('compositionend', () => {
+            field.dataset.composing = '';
+            // 조합이 끝난 최종 글자 기준으로 한 번만 재구성 + 커서를 끝으로 이동
+            reformatCompositeInput(field);
+        });
     });
 
     setTimeout(() => {
