@@ -1019,6 +1019,18 @@
             });
         }
 
+        function reformatCompositeInput(el) {
+            const text = el.innerText;
+            el.innerHTML = getCompositeHTML(text);
+
+            const range = document.createRange();
+            const sel = window.getSelection();
+            range.selectNodeContents(el);
+            range.collapse(false);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }
+
        // 페이지 렌더링 함수
         function renderPage(layerEl, boxEl, pageData) {
     
@@ -1295,11 +1307,11 @@ function showSearchInput() {
    searchWrapper.innerHTML = `
         <span class="search-spacer"></span><!-- 공간 확보 -->
         <span class="search-content">
-            <span class="search-field" id="input1" contenteditable="true" data-placeholder="책 제목" onkeydown="handleInputKey(event, 'input2')"></span><!--
+            <span class="search-field" id="input1" contenteditable="true" data-placeholder="책 제목" oninput="reformatCompositeInput(this)" onkeydown="handleInputKey(event, 'input2')"></span><!--
          --><span class="search-divider">${getCompositeHTML(',')}</span><!--
-         --><span class="search-field" id="input2" contenteditable="true" data-placeholder=" 첫 단어" onkeydown="handleInputKey(event, 'input3')"></span><!--
+         --><span class="search-field" id="input2" contenteditable="true" data-placeholder=" 첫 단어" oninput="reformatCompositeInput(this)" onkeydown="handleInputKey(event, 'input3')"></span><!--
          --><span class="search-divider">${getCompositeHTML(',')}</span><!--
-         --><span class="search-field" id="input3" contenteditable="true" data-placeholder=" 타임스탬프  " onkeydown="handleInputKey(event, 'submit')"></span>
+         --><span class="search-field" id="input3" contenteditable="true" data-placeholder=" 타임스탬프  " oninput="reformatCompositeInput(this)" onkeydown="handleInputKey(event, 'submit')"></span>
         </span>
     `;
 
